@@ -40,7 +40,7 @@ export default function ClosingApp() {
   return (
     <main className="app-shell">
       <header className="topbar">
-        <a className="brand" href="#top" aria-label="Spike's closing home">
+        <a className="brand" href="#top" aria-label="Spike's closing prototype home">
           <span className="brand-mark">S</span>
           <span>SPIKE’S <small>Closing crew</small></span>
         </a>
@@ -51,13 +51,18 @@ export default function ClosingApp() {
         <button className="avatar" aria-label="Maya's profile">M</button>
       </header>
 
+      <section className="prototype-banner safety-note" role="note">
+        <strong>Interactive prototype</strong>
+        <span>Sample data resets when this page reloads. Nothing here changes a Square account or timecard.</span>
+      </section>
+
       {view === "team" ? (
         <div className="page-grid" id="top">
           <section className="main-column">
             <div className="eyebrow">Tuesday close · Downtown</div>
             <div className="title-row">
-              <div><h1>Finish strong.</h1><p>Resolve every item, then clock out safely.</p></div>
-              <div className="shift-chip"><span className="pulse" /> Clocked in · 4h 18m</div>
+              <div><h1>Finish strong.</h1><p>Try the sample checklist, exceptions, and simulated clock-out.</p></div>
+              <div className="shift-chip"><span className="pulse" /> Sample shift · 4h 18m</div>
             </div>
 
             <details className="priorities-card">
@@ -106,11 +111,11 @@ export default function ClosingApp() {
           <aside className="closeout-card">
             <div className="closeout-icon">↗</div>
             <p className="eyebrow">Shift closeout</p>
-            <h2>{clockedOut ? "You’re clocked out." : complete ? "Ready to clock out" : "Clock-out is locked"}</h2>
-            <p>{clockedOut ? "Square confirmed your timecard closed at 5:08 PM." : complete ? "We’ll verify your open Square timecard one more time before closing it." : `Resolve ${tasks.length - resolved} remaining items. Exceptions count when a reason is included.`}</p>
+            <h2>{clockedOut ? "Prototype complete." : complete ? "Ready to simulate clock-out" : "Clock-out is locked"}</h2>
+            <p>{clockedOut ? "The prototype simulated a successful 5:08 PM clock-out. No Square data changed." : complete ? "The prototype will review the sample timecard before simulating completion." : `Resolve ${tasks.length - resolved} remaining items. Exceptions count when a reason is included.`}</p>
             <div className="mini-progress"><span style={{ width: `${(resolved / tasks.length) * 100}%` }} /></div>
-            <button className="primary-button" disabled={!complete || clockedOut} onClick={() => setClockoutOpen(true)}>{clockedOut ? "Clock-out confirmed" : complete ? "Review & clock out" : `${tasks.length - resolved} items remaining`}</button>
-            <small>Clock-out is never triggered by a single task tap.</small>
+            <button className="primary-button" disabled={!complete || clockedOut} onClick={() => setClockoutOpen(true)}>{clockedOut ? "Simulation complete" : complete ? "Review simulation" : `${tasks.length - resolved} items remaining`}</button>
+            <small>Demo only: clock-out is never sent to Square.</small>
           </aside>
         </div>
       ) : <ManagerView tasks={tasks} />}
@@ -128,10 +133,10 @@ export default function ClosingApp() {
 
       {clockoutOpen && <div className="modal-backdrop" role="presentation" onMouseDown={() => setClockoutOpen(false)}>
         <section className="modal confirm-modal" role="dialog" aria-modal="true" aria-labelledby="clockout-title" onMouseDown={(e) => e.stopPropagation()}>
-          <div className="confirm-mark">✓</div><div className="modal-kicker">Final confirmation</div><h2 id="clockout-title">Clock out of Square now?</h2>
-          <p>All {tasks.length} items are resolved, including {tasks.filter((task) => task.status === "exception").length} exception. Your recorded shift is <strong>11:40 AM–now</strong>.</p>
-          <div className="safety-note"><strong>Before you continue</strong><span>Confirm any break is ended and cash tips are declared in Square.</span></div>
-          <div className="modal-actions"><button className="secondary-button" onClick={() => setClockoutOpen(false)}>Not yet</button><button className="primary-button" onClick={() => { setClockedOut(true); setClockoutOpen(false); }}>Confirm clock-out</button></div>
+          <div className="confirm-mark">✓</div><div className="modal-kicker">Prototype confirmation</div><h2 id="clockout-title">Simulate a Square clock-out?</h2>
+          <p>All {tasks.length} sample items are resolved, including {tasks.filter((task) => task.status === "exception").length} exception. No Square timecard will be changed.</p>
+          <div className="safety-note"><strong>Demo boundary</strong><span>This confirms only the prototype state; your actual Square timecard remains unchanged.</span></div>
+          <div className="modal-actions"><button className="secondary-button" onClick={() => setClockoutOpen(false)}>Not yet</button><button className="primary-button" onClick={() => { setClockedOut(true); setClockoutOpen(false); }}>Simulate clock-out</button></div>
         </section>
       </div>}
     </main>
@@ -141,23 +146,23 @@ export default function ClosingApp() {
 function ManagerView({ tasks }: { tasks: Task[] }) {
   const exceptions = tasks.filter((task) => task.status === "exception");
   return <div className="manager-page">
-    <div className="eyebrow">Live close · Downtown</div>
-    <div className="manager-title"><div><h1>Tonight’s close</h1><p>See where the team needs help before anyone clocks out.</p></div><button className="secondary-button">Export audit</button></div>
+    <div className="eyebrow">Sample close · Downtown</div>
+    <div className="manager-title"><div><h1>Tonight’s prototype close</h1><p>Explore sample crew progress, exceptions, and audit details.</p></div><button className="secondary-button" disabled>Export unavailable in prototype</button></div>
     <div className="metric-grid">
       <article><span>Overall progress</span><strong>{Math.round(tasks.filter(t => t.status !== "open").length / tasks.length * 100)}%</strong><small>{tasks.filter(t => t.status !== "open").length} of {tasks.length} resolved</small></article>
-      <article><span>Active closers</span><strong>3</strong><small>All currently clocked in</small></article>
+      <article><span>Sample closers</span><strong>3</strong><small>Illustrative team state</small></article>
       <article className="alert-metric"><span>Exceptions</span><strong>{exceptions.length}</strong><small>Needs manager review</small></article>
     </div>
     <div className="manager-grid">
-      <section className="panel"><div className="panel-heading"><div><p className="eyebrow">Crew status</p><h2>Closing team</h2></div><span className="live-dot">Live</span></div>
+      <section className="panel"><div className="panel-heading"><div><p className="eyebrow">Sample crew status</p><h2>Closing team</h2></div><span className="live-dot">Sample</span></div>
         {[{ name: "Maya Chen", station: "Coffee & Candy · Espresso Bar", done: 8, total: 16 }, { name: "Andre Lewis", station: "Register · Bakery · Bagel", done: 5, total: 18 }, { name: "Jordan Kim", station: "Lobby · Alley · Patio", done: 3, total: 16 }].map((person, i) => <div className="person-row" key={person.name}><span className={`person-avatar a${i}`}>{person.name[0]}</span><div><strong>{person.name}</strong><small>{person.station}</small></div><div className="person-progress"><span><i style={{ width: `${person.done / person.total * 100}%` }} /></span><b>{person.done}/{person.total}</b></div></div>)}
       </section>
       <section className="panel"><div className="panel-heading"><div><p className="eyebrow">Needs attention</p><h2>Exceptions</h2></div><span className="count-badge">{exceptions.length}</span></div>
-        {exceptions.map((task) => <article className="exception-card" key={task.id}><div><strong>{task.station}</strong><span>{task.at}</span></div><p>{task.title}</p><blockquote>{task.reason}</blockquote><small>Reported by {task.actor}</small><button>Acknowledge</button></article>)}
+        {exceptions.map((task) => <article className="exception-card" key={task.id}><div><strong>{task.station}</strong><span>{task.at}</span></div><p>{task.title}</p><blockquote>{task.reason}</blockquote><small>Reported by {task.actor}</small><button disabled>Sample exception</button></article>)}
       </section>
     </div>
-    <section className="panel audit"><div className="panel-heading"><div><p className="eyebrow">Accountability</p><h2>Audit trail</h2></div><button className="text-button">View all activity</button></div>
-      {["4:51 PM|Maya marked Espresso Bar as an exception|Reason saved · manager review pending", "4:42 PM|Maya completed Coffee & Candy early-shift prep|Device: Maya’s iPhone", "4:36 PM|Andre completed Bakery Case early-shift prep|Device: Andre’s Pixel", "11:40 AM|Maya’s Square timecard matched|Timecard is open · version 7"].map((line, i) => { const [time, title, detail] = line.split("|"); return <div className="audit-row" key={line}><span className={i === 0 ? "warn" : ""}>{i === 0 ? "!" : "✓"}</span><time>{time}</time><div><strong>{title}</strong><small>{detail}</small></div></div>; })}
+    <section className="panel audit"><div className="panel-heading"><div><p className="eyebrow">Prototype accountability</p><h2>Sample audit trail</h2></div><button className="text-button" disabled>Sample activity</button></div>
+      {["4:51 PM|Maya marked Espresso Bar as an exception|Sample reason · manager review pending", "4:42 PM|Maya completed Coffee & Candy early-shift prep|Sample device: Maya’s iPhone", "4:36 PM|Andre completed Bakery Case early-shift prep|Sample device: Andre’s Pixel", "11:40 AM|Sample Square timecard matched|Prototype timecard is open · version 7"].map((line, i) => { const [time, title, detail] = line.split("|"); return <div className="audit-row" key={line}><span className={i === 0 ? "warn" : ""}>{i === 0 ? "!" : "✓"}</span><time>{time}</time><div><strong>{title}</strong><small>{detail}</small></div></div>; })}
     </section>
   </div>;
 }
